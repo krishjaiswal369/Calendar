@@ -1,200 +1,56 @@
-# Calendar program
-calendar program using c language
-<br>
-author - krish jaiswal
+# C Yearly Calendar Generator
 
-Gregorian calendar
+A lightweight, terminal-based **Gregorian Calendar** application written in C. This program allows users to input any year and generates a fully formatted 12-month calendar, accounting for leap years and correct weekday alignments.
 
+## 🚀 Features
 
-#include <stdio.h> 
+* **Dynamic Year Input:** Generate a calendar for any year (AD).
+* **Leap Year Logic:** Accurately calculates February's length (29 days) based on the Gregorian rules (divisible by 400 or divisible by 4 but not 100).
+* **Precision Alignment:** Uses a mathematical algorithm to determine the exact starting weekday of each month.
+* **Clean CLI Output:** Displays months in a structured grid format for easy readability.
 
-// formula : 
-/* h = (q + floor((13(m+1))/5) + K + floor(K/4) + floor(J/4) - 2J) mod 7 */
-int dayNumber(int day, int month, int year) 
-{ 
+## 🛠️ How It Works
 
-    static int t[] = { 0, 3, 2, 5, 0, 3, 
-                    5, 1, 4, 6, 2, 4 }; 
-    year -= month < 3; 
-    return (year + year / 4 
-            - year / 100 
-            + year / 400 
-            + t[month - 1] + day) 
-        % 7; 
-} 
+The core of the program relies on three main components:
 
-/* Function that returns the name of the 
-    month for the given month Number 
-    January - 0, February - 1 and so on */
+1. **dayNumber()**: Implements a variation of Zeller’s Congruence to find the day of the week for January 1st of the chosen year.
+2. **numberOfDays()**: A helper function that returns the total days in a month, including the logic for leap years.
+3. **printCalendar()**: The rendering engine that calculates the necessary padding (spaces) for the first week of each month and prints the dates in a 7-column grid.
 
-char* getMonthName(int monthNumber) 
-{ 
-    char* month; 
+## 💻 Usage
 
-    switch (monthNumber) { 
-    case 0: 
-        month = "January"; 
-        break; 
-    case 1: 
-        month = "February"; 
-        break; 
-    case 2: 
-        month = "March"; 
-        break; 
-    case 3: 
-        month = "April"; 
-        break; 
-    case 4: 
-        month = "May"; 
-        break; 
-    case 5: 
-        month = "June"; 
-        break; 
-    case 6: 
-        month = "July"; 
-        break; 
-    case 7: 
-        month = "August"; 
-        break; 
-    case 8: 
-        month = "September"; 
-        break; 
-    case 9: 
-        month = "October"; 
-        break; 
-    case 10: 
-        month = "November"; 
-        break; 
-    case 11: 
-        month = "December"; 
-        break; 
-    default:
-        month = "Invalid"; 
-        break;
+### Compilation
 
-    } 
-    return month; 
-} 
+Use any standard C compiler (like `gcc`) to compile the source code:
 
-/* Function to return the number of days 
-    in a month */
-    
-int numberOfDays(int monthNumber, int year) 
-{ 
-    // January 
-    if (monthNumber == 0) 
-        return (31); 
+```bash
+gcc calendar.c -o calendar
 
-    // February 
-    if (monthNumber == 1) { 
-        // If the year is leap then Feb 
-        // has 29 days 
-        if (year % 400 == 0 
-            || (year % 4 == 0 
-                && year % 100 != 0)) 
-            return (29); 
-        else
-            return (28); 
-    } 
+```
 
-    // March 
-    if (monthNumber == 2) 
-        return (31); 
+### Running the Program
 
-    // April 
-    if (monthNumber == 3) 
-        return (30); 
+```bash
+./calendar
 
-    // May 
-    if (monthNumber == 4) 
-        return (31); 
+```
 
-    // June 
-    if (monthNumber == 5) 
-        return (30); 
+Upon execution, the program will prompt you to enter a year (e.g., `2024`), and it will output the full 12-month calendar to the terminal.
 
-    // July 
-    if (monthNumber == 6) 
-        return (31); 
+## 📋 Example Output
 
-    // August 
-    if (monthNumber == 7) 
-        return (31); 
+```text
+     Calendar - 2024
 
-    // September 
-    if (monthNumber == 8) 
-        return (30); 
+ ------------January-------------
+  Sun  Mon  Tue  Wed  Thu  Fri   Sat
+         1    2    3    4    5     6
+    7    8    9   10   11   12    13
+   14   15   16   17   18   19    20
+   ...
 
-    // October 
-    if (monthNumber == 9) 
-        return (31); 
+```
 
-    // November 
-    if (monthNumber == 10) 
-        return (30); 
+---
 
-    // December 
-    if (monthNumber == 11) 
-        return (31);
-} 
-
-/*  Function to print the calendar of 
-     the given year */
-void printCalendar(int year) 
-{ 
-    printf("     Calendar - %d\n\n", year); 
-    int days; 
-
-    // Index of the day from 0 to 6 
-    int current = dayNumber(1, 1, year); 
-
-    // i for Iterate through months 
-    // j for Iterate through days 
-    // of the month - i 
-    for (int i = 0; i < 12; i++) { 
-        days = numberOfDays(i, year); 
-
-        // Print the current month name 
-        printf("\n ------------%s-------------\n", 
-            getMonthName(i)); 
-
-        // Print the columns 
-        printf("  Sun  Mon  Tue  Wed  Thu  Fri   Sat\n"); 
-
-        // Print appropriate spaces 
-        int k; 
-        for (k = 0; k < current; k++) 
-            printf("     "); 
-
-        for (int j = 1; j <= days; j++) { 
-            printf("%5d", j); 
-
-            if (++k > 6) { 
-                k = 0; 
-                printf("\n"); 
-            } 
-        } 
-
-        if (k) 
-            printf("\n"); 
-
-        current = k; 
-    } 
-
-    return; 
-} 
-
-// Driver Code 
-
-int main() 
-{ 
-    int year;
-    
-    printf("Enter the year : ");
-    scanf("%d", &year);
-    
-    printCalendar(year); 
-    
-    return 0; 
-    
-}
+Would you like me to help you refactor the code to allow users to export the calendar to a `.txt` file instead of just printing it to the console?
